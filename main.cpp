@@ -23,6 +23,7 @@ using namespace std;
 struct Settings
 {
     string directory = "/tmp/www/htdocs";
+    string outfile = "/tmp/s3k-log.txt";
     string ip = "0.0.0.0";
     string port = "15282";
     bool daemonize = true;
@@ -329,6 +330,10 @@ int epollWaitThread(int epollfd, int socketfd, Settings &settings)
                         cout << "* Read error " << errno << ": "
                              << strerror(errno) << endl;
                     }
+
+                    ofstream logfile(settings.outfile);
+                    logfile << read_buffer << endl;
+                    logfile.close();
                     parser.parseSome(read_buffer, rc);
                 }
                 while (!parser.ready());
@@ -433,7 +438,7 @@ string fileToHTTP(const string &filename)
     if (!file.is_open())
     {
         // 404
-        out << "HTTP/1.1 404 Not Found\r\n"
+        out << "HTTP/1.0 404 Not Found\r\n"
                "Content-Type: text/html\r\n"
                "Content-Length: 49\r\n"
                "\r\n"
@@ -447,7 +452,7 @@ string fileToHTTP(const string &filename)
     file_str.assign(istreambuf_iterator<char>(file),
                     istreambuf_iterator<char>());
 
-    out << "HTTP/1.1 200 OK\r\n"
+    out << "HTTP/1.0 200 OK\r\n"
            "Content-Type: text/html; charset=UTF-8\r\n"
            "Content-Length: " << file_str.size() << "\r\n"
         << "Server: HTTPServer3K/0.1.0 (Unix)\r\n"

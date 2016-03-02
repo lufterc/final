@@ -7,6 +7,7 @@
 #include <iterator>
 #include <map>
 
+#include <signal.h>
 #include <assert.h>
 #include <string.h>
 #include <getopt.h>
@@ -93,6 +94,9 @@ int main(int argc, char *argv[])
 {
     test();
     cout << "* Welcome to the HTTP Server 3000!" << endl;
+
+    signal(SIGPIPE, SIG_IGN);
+    signal(SIGHUP, SIG_IGN);
 
     Settings settings;
     int rc;

@@ -58,11 +58,15 @@ public:
             return string();
         }
 
-        size_t efnpos = buffer.find(' ', fnpos);
-        if (fnpos == string::npos)
+        size_t efnpos = buffer.find('?', fnpos);
+        if (efnpos == string::npos)
         {
-            cout << "* Broken request" << endl;
-            return string();
+            efnpos = buffer.find(' ', fnpos);
+            if (efnpos == string::npos)
+            {
+                cout << "* Broken request" << endl;
+                return string();
+            }
         }
 
         return buffer.substr(fnpos, efnpos - fnpos);

@@ -23,7 +23,7 @@ using namespace std;
 struct Settings
 {
     string directory = "/tmp/www/htdocs";
-    string outfile = "/tmp/s3k-log.txt";
+    string outfile = "/var/tmp/s3k-log.txt";
     string ip = "0.0.0.0";
     string port = "15282";
     bool daemonize = true;
@@ -121,6 +121,9 @@ int main(int argc, char *argv[])
     if (settings.daemonize)
     {
         cout << "* This is the last message you will see, bye-bye!" << endl;
+        close(STDIN_FILENO);
+        close(STDOUT_FILENO);
+        close(STDERR_FILENO);
         int pid = fork();
         if (pid < 0)
         {

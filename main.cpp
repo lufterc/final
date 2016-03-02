@@ -113,6 +113,21 @@ int main(int argc, char *argv[])
         }
     }
 
+    if (settings.daemonize)
+    {
+        cout << "* This is the last message you will see, bye-bye!" << endl;
+        int pid = fork();
+        if (pid < 0)
+        {
+            cout << "* Fork error!" << endl;
+            return 1;
+        }
+        if (pid > 0)
+        {
+            return 0;
+        }
+    }
+
     cout << "* Checking htdocs directory" << endl;
     struct stat st;
     if (stat(settings.directory.c_str(), &st) == -1)
@@ -177,12 +192,6 @@ int main(int argc, char *argv[])
     thread thread1(&epollWaitThread, epollfd, socketfd, ref(settings));
     thread thread2(&epollWaitThread, epollfd, socketfd, ref(settings));
     thread thread3(&epollWaitThread, epollfd, socketfd, ref(settings));
-
-    if (settings.daemonize)
-    {
-        cout << "* This is the last message you will see, bye-bye!" << endl;
-        daemon(0, 0);
-    }
 
     thread1.join();
     thread2.join();
